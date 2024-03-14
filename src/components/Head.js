@@ -11,7 +11,7 @@ const Head = () => {
   };
 
   return (
-    <div className="grid grid-flow-col p-4 shadow-lg items-center">
+    <div className="grid grid-flow-col p-4 shadow-lg items-center fixed w-full bg-white">
       <div className="flex items-center col-span-1">
         <img
           onClick={() => toggleMenuHandler()}
