@@ -1,10 +1,41 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
+import { YOUTUBE_SEARCH_SUGGESTION_API } from "../utils/constants";
+import { cacheResults } from "../utils/searchSlice";
 
 const Head = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState(null);
+  const [isUserType, setIsUserType] = useState(false);
+  const cacheResult = useSelector((store) => store.search);
+
   //dispatch
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    let intervalId = setTimeout(() => {
+      if (cacheResult[searchTerm]) {
+        setSuggestions(cacheResult[searchTerm]);
+      } else {
+        searchSuggestion();
+      }
+    }, 200);
+
+    return () => clearInterval(intervalId);
+  }, [searchTerm]);
+
+  const searchSuggestion = async () => {
+    const data = await fetch(YOUTUBE_SEARCH_SUGGESTION_API + searchTerm);
+    const json = await data.json();
+    console.log(searchTerm);
+    setSuggestions(json[1]);
+    dispatch(
+      cacheResults({
+        [searchTerm]: json[1],
+      })
+    );
+  };
 
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
@@ -29,8 +60,29 @@ const Head = () => {
         <input
           type="text"
           placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+          }}
+          onFocus={() => {
+            setIsUserType(true);
+          }}
+          onBlur={() => {
+            setIsUserType(false);
+          }}
           className="w-1/2 py-2 px-4 border border-gray-400 rounded-l-full "
         />
+
+        {isUserType && suggestions && (
+          <ul className="bg-white px-4 py-1 absolute top-[4.3rem] w-1/4 rounded-lg">
+            {suggestions.map((suggestion) => (
+              <li className="my-1" key={suggestion}>
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <button className="py-2 px-4 border border-gray-400 rounded-r-full">
           <img
             className="w-6"
