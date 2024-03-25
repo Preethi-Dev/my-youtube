@@ -8,6 +8,8 @@ const Head = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState(null);
   const [isUserType, setIsUserType] = useState(false);
+
+  //subscribe to store
   const cacheResult = useSelector((store) => store.search);
 
   //dispatch
@@ -68,7 +70,7 @@ const Head = () => {
             setIsUserType(true);
           }}
           onBlur={() => {
-            setIsUserType(false);
+            setTimeout(() => setIsUserType(false), 200);
           }}
           className="w-1/2 py-2 px-4 border border-gray-400 rounded-l-full "
         />
@@ -76,8 +78,14 @@ const Head = () => {
         {isUserType && suggestions && (
           <ul className="bg-white px-4 py-1 absolute top-[4.3rem] w-1/4 rounded-lg">
             {suggestions.map((suggestion) => (
-              <li className="my-1" key={suggestion}>
-                {suggestion}
+              <li className="my-1 cursor-pointer" key={suggestion}>
+                <a
+                  href={`/results?search_query=${suggestion
+                    .split(" ")
+                    .join("+")}`}
+                >
+                  {suggestion}
+                </a>
               </li>
             ))}
           </ul>
