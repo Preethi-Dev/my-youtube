@@ -5,6 +5,7 @@ import WatchPage from "./components/WatchPage";
 import store from "./utils/store";
 import { Provider } from "react-redux";
 import MainContainer from "./components/MainContainer";
+import VideoRecommendationContainer from "./components/VideoRecommendationContainer";
 
 const appRouter = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/watch",
         element: <WatchPage />,
+      },
+      {
+        path: "/results",
+        element: <VideoRecommendationContainer />,
       },
     ],
   },
